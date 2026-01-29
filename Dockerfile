@@ -1,1 +1,1 @@
-.devcontainer/Dockerfile_fedora
+.devcontainer/Dockerfile
