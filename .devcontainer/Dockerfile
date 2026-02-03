@@ -17,17 +17,15 @@ RUN dnf -y makecache && \
         sudo \
         java-latest-openjdk-devel && \
     dnf clean all && \
-    rm -rf /var/cache/dnf
-
-# Create user 'dev' with home dir and zsh as default shell
-RUN useradd -m -s /bin/zsh dev && \
-    echo 'dev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+    rm -rf /var/cache/dnf && \
+    useradd -m -s /bin/zsh dev && \
+    echo 'dev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \  # Create user 'dev' with home dir and zsh as default shell
 
 ## Android-ndk stuff
-RUN mkdir -p /opt/
-RUN wget -P /opt/ "https://dl.google.com/android/repository/android-ndk-r27c-linux.zip"
-RUN unzip /opt/android-ndk-r27c-linux.zip -d /opt/
-RUN rm -rf /opt/android-ndk-r27c-linux.zip
+RUN mkdir -p /opt/ && \
+wget -P /opt/ "https://dl.google.com/android/repository/android-ndk-r27c-linux.zip" && \
+unzip /opt/android-ndk-r27c-linux.zip -d /opt/ && \
+rm -rf /opt/android-ndk-r27c-linux.zip
 
 # Environment variables for Android SDK
 ENV ANDROID_SDK_ROOT="/opt/android-sdk"
@@ -73,10 +71,8 @@ SHELL ["/bin/zsh", "-c"]
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 
 ## omz extensions, 1) fzf-tab
-RUN git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab
-
-## Use custom zsh file
-RUN curl "https://raw.githubusercontent.com/FG-rps/test_repo/refs/heads/main/zshrc" > /home/dev/.zshrc
+RUN git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab && \ ## Use custom zsh file
+curl "https://raw.githubusercontent.com/FG-rps/test_repo/refs/heads/main/zshrc" > /home/dev/.zshrc
 
 ## setup android cross-compilation
 RUN rustup target add aarch64-linux-android \
@@ -85,8 +81,4 @@ RUN rustup target add aarch64-linux-android \
                     i686-linux-android
 
 ## Nvim stuff
-RUN mkdir -p ~/.local/share/fonts
-RUN curl "https://raw.githubusercontent.com/FG-rps/test_repo/refs/heads/main/CaskaydiaCoveNerdFont-Regular.ttf" > ~/.local/share/fonts/CaskaydiaCoveNerdFont-Regular.ttf
-RUN git clone https://github.com/LazyVim/starter ~/.config/nvim
-RUN rm ~/.config/nvim/init.lua
-RUN curl "https://raw.githubusercontent.com/FG-rps/test_repo/refs/heads/main/init.lua" > ~/.config/nvim/init.lua
+RUN mkdir -p ~/.local/share/fonts && curl "https://raw.githubusercontent.com/FG-rps/test_repo/refs/heads/main/CaskaydiaCoveNerdFont-Regular.ttf" > ~/.local/share/fonts/CaskaydiaCoveNerdFont-Regular.ttf && git clone https://github.com/LazyVim/starter ~/.config/nvim && rm ~/.config/nvim/init.lua && curl "https://raw.githubusercontent.com/FG-rps/test_repo/refs/heads/main/init.lua" > ~/.config/nvim/init.lua
